@@ -1,9 +1,13 @@
 import * as express from "express";
 import * as socketio from "socket.io";
 import * as path from "path";
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 
 const app = express();
 app.set("port", process.env.PORT || 3000);
+dotenv.config();
+
 
 let http = require("http").Server(app);
 // set up socket.io and bind it to our
