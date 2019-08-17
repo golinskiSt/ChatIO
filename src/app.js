@@ -7,14 +7,13 @@ const mongoose = require('./database/connection');
 const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
-const config = require('config');
 //routes
 const users = require('./routes/users.routes');
 const auth = require('./routes/auth.route');
 //.env
 dotenv.config();
-if(!config.get('jwtPrivateKey')){
-    console.log("FATAL eRROR: JTWkey is not defined.");
+if(!process.env.JWT_KEY){
+    console.log("FATAL ERROR: JTWkey is not defined.");
     process.exit(1);
 }
 //app settings
@@ -22,7 +21,6 @@ app.set("port", process.env.PORT || 3000);
 app.use(express.json());
 app.use('/api/users', users);
 app.use('/api/auth', auth);
-//database settings
 
 app.get("/", function (req, res) {
     res.sendFile(path.resolve("./client/index.html"));
