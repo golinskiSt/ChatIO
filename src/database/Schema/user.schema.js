@@ -50,15 +50,21 @@ UserSchema.pre('save', async function (next) {
   // Hash the password before saving the user model
   const user = this
   if (user.isModified('password')) {
-      user.password = await bcrypt.hash(user.password, 8)
+      user.password = await bcrypt.hash(user.password, 10);
   }
-  next()
+  next();
 })
 
 UserSchema.methods.generateAuthToken = async function() {
   // Generate an auth token for the user
   const user = this
-  const token = jwt.sign({_id: user._id}, process.env.JWT_KEY)
+  const token = jwt.sign(
+    {
+      _id: user._id,
+      time: Date.now()
+    },
+     process.env.JWT_KEY
+  );
   user.tokens = user.tokens.concat({token})
   await user.save()
   return token
@@ -66,15 +72,17 @@ UserSchema.methods.generateAuthToken = async function() {
 
 UserSchema.statics.findByCredentials = async (email, password) => {
   // Search for a user by email and password.
-  const user = await User.findOne({ email} )
+  console.log(email, password);
+  const user = await User.findOne({email: email});
   if (!user) {
-      throw new Error({ error: 'Invalid login credentials' })
+      throw new Error('Invalid login credentials');
   }
-  const isPasswordMatch = await bcrypt.compare(password, user.password)
-  if (!isPasswordMatch) {
-      throw new Error({ error: 'Invalid login credentials' })
+  const isPasswordCorrect = bcrypt.compare(password, user.password);
+  if(isPasswordCorrect) {
+    return user;
+  } else {
+    throw new Error('Invalid login credentials');
   }
-  return user
 }
 
 function validateUser(user) {
