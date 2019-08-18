@@ -37,6 +37,10 @@ const UserSchema = new Schema({
     type: Date, 
     default: Date.now 
   },
+  isAdmin: {
+    type: Boolean,
+    default: false
+  },
   descripton: String,
   tokens: [{
     token: {
@@ -57,22 +61,24 @@ UserSchema.pre('save', async function (next) {
 
 UserSchema.methods.generateAuthToken = async function() {
   // Generate an auth token for the user
-  const user = this
+  const user = this;
   const token = jwt.sign(
     {
       _id: user._id,
-      time: Date.now()
+      isAdmin: user.isAdmin,
+      time: Date.now(),
     },
      process.env.JWT_KEY
   );
-  user.tokens = user.tokens.concat({token})
+  //Deprecat. Tokens dont have to be in DB
+  var now = Date.now();
+  user.tokens = user.tokens.concat({now});
   await user.save()
   return token
 }
 
 UserSchema.statics.findByCredentials = async (email, password) => {
   // Search for a user by email and password.
-  console.log(email, password);
   const user = await User.findOne({email: email});
   if (!user) {
       throw new Error('Invalid login credentials');
@@ -106,4 +112,4 @@ function validateUser(user) {
 const User = mongoose.model("User", UserSchema);
 
 exports.User = User;
-exports.validate = validateUser;
+exports.validate = validateUser; 
