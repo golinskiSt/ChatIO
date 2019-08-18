@@ -7,6 +7,7 @@ const mongoose = require('./database/connection');
 const app = express();
 const http = require("http").Server(app);
 const io = require("socket.io")(http);
+const cors = require('cors')
 //routes
 const users = require('./routes/users.routes');
 const auth = require('./routes/auth.route');
@@ -16,7 +17,20 @@ if(!process.env.JWT_KEY){
     console.log("FATAL ERROR: JTWkey is not defined.");
     process.exit(1);
 }
+/*cors
+var whitelist = ['http://localhost:8100', 'http://localhost:3000']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+app.use(cors(corsOptions)); */
 //app settings
+app.disable('x-powered-by')
 app.set("port", process.env.PORT || 3000);
 app.use(express.json());
 app.use('/api/users', users);

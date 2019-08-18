@@ -1,9 +1,10 @@
-export interface User {
-    id: number;
+export interface UserLogin {
+    email: string;
+    password: string;
+}
+
+export interface UserRegister {
     name: string;
     email: string;
     password: string;
-    comments: string[];
-    joinDate: Date;
-    description: string;
 }
