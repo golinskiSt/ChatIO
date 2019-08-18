@@ -11,7 +11,7 @@ const io = require("socket.io")(http);
 const users = require('./routes/users.routes');
 const auth = require('./routes/auth.route');
 //.env
-dotenv.config();
+dotenv.config(); 
 if(!process.env.JWT_KEY){
     console.log("FATAL ERROR: JTWkey is not defined.");
     process.exit(1);
