@@ -6,7 +6,6 @@ const dotenv = require("dotenv");
 const mongoose = require("./database/connection");
 const app = express();
 const http = require("http").Server(app);
-const io = require("socket.io")(http);
 const cors = require("cors");
 const winston = require('winston');
 const error = require('./middleware/error.middleware');
@@ -19,6 +18,8 @@ if (!process.env.JWT_KEY) {
   console.log("FATAL ERROR: JTWkey is not defined.");
   process.exit(1);
 }
+//sockeet.io
+require('./io/chat');
 
 const logger = winston.createLogger({
   level: 'info',
@@ -29,9 +30,9 @@ const logger = winston.createLogger({
     new winston.transports.File({ filename: 'combined.log' })
   ],
   exceptionHandlers: [
-    new transports.File({ filename: 'exceptions.log' })
+    new winston.transports.File({ filename: 'exceptions.log' })
   ],
-  exitOnError: false;
+  exitOnError: false
 });
 if (process.env.NODE_ENV !== 'production') {
   logger.add(new winston.transports.Console({
@@ -74,15 +75,6 @@ app.get("/", function(req, res) {
   res.sendFile(path.resolve("./client/index.html"));
 });
 
-io.on("connection", function(socket) {
-  console.log("a user connected");
-  socket.on("message", function(message) {
-    socket.se;
-  });
-  socket.on("disconnect", function() {
-    console.log("user disconnected");
-  });
-});
 var server = http.listen(3000, function() {
   console.log("listening on port:" + app.get("port"));
 });
