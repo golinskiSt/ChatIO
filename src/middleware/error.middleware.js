@@ -1,4 +1,4 @@
-const logger = reequire('winston');
+const logger = require('winston');
 
 module.exports = function (err, req, res, next) {
     logger.error(err.message, err);
